@@ -1,13 +1,14 @@
 from flask import Flask, request
 import pymysql
+import os
 
 app = Flask(__name__)
 
 db = pymysql.connect(
-    host='DB_HOST',
-    user='DB_USER',
-    password='DB_PASSWORD',
-    database='DB_NAME'
+    host=os.environ["DB_HOST"],
+    user=os.environ["DB_USER"],
+    password=os.environ["DB_PASSWORD"],
+    database=os.environ["DB_NAME"]
 )
 
 @app.route('/', methods=['GET'])
