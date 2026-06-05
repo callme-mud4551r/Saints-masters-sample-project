@@ -1,8 +1,17 @@
+
+#----terraform-----
 .terraform/
 terraform/.terraform/
 *.tfstate
 *.tfstate.*
 .terraform.lock.hcl
+crash.log
+tfplan
+*tfplan*
+*.tfvars
+*.tfvars.json
+
+#----python-------------
 __pycache__/
 *.pyc
 venv/

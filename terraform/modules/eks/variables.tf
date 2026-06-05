@@ -1,13 +1,12 @@
-variable "cluster_name" {
+variable "Three-tier-app" {
   type = string
 }
 
-variable "cluster_role_arn" {
+variable "vpc_id" {
   type = string
+
 }
 
-variable "subnet_ids" {
+variable "private_subnet_ids" {
   type = list(string)
 }
-
-variable "cluster_policy_attachment" {}

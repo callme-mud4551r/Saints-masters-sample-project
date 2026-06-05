@@ -1,14 +1,24 @@
 output "vpc_id" {
-  description = "VPC ID"
+
   value       = aws_vpc.main.id
+  description = "The ID of the vpc"
 }
 
-output "public_subnet_ids" {
-  description = "Public Subnet IDs"
-  value       = aws_subnet.public[*].id
+output "vpc_cidr_block" {
+  value       = aws_vpc.main.cidr_block
+  description = "The CIDR of vpc"
+
 }
 
 output "private_subnet_ids" {
-  description = "Private Subnet IDs"
   value       = aws_subnet.private[*].id
+  description = " 2 Private subnet ID's"
 }
+
+output "public_subnet_ids" {
+
+  value       = aws_subnet.public[*].id
+  description = "2 public subnet ID's"
+
+}
+
