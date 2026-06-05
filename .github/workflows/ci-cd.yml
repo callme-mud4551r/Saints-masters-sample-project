@@ -101,7 +101,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve 
 #-------------App deploy to cluster--------------
-deploy:
+  deploy:
     needs: terraform
     runs-on: ubuntu-latest
     steps:
