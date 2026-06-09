@@ -107,9 +107,9 @@ jobs:
 
       - name: Update Deployment Image
         run: |
-          kubectl set image deployment/flask-app \
-          flask-app=$IMAGE_REPO:$IMAGE_TAG
+          kubectl set image deployment/three-tier-app \
+          three-tier-app=$IMAGE_REPO:$IMAGE_TAG
 
       - name: Wait for Rollout
         run: |
-          kubectl rollout status deployment/flask-app
+          kubectl rollout status deployment/three-tier-app
