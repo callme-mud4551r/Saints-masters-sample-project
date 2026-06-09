@@ -25,3 +25,10 @@ module "eks" {
   private_subnet_ids = module.vpc.private_subnet_ids
 
 }
+
+
+#-------------ECR module----------------------
+module "ecr" {
+  source          = "./modules/ecr"
+  repository_name = "three-tier-app"
+}
