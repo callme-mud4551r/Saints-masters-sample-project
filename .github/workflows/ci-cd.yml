@@ -105,10 +105,19 @@ jobs:
           --region ${{ secrets.AWS_REGION }} \
           --name three-tier-app-cluster
 
+      - name: Apply Manifests
+        run: |
+        kubectl apply -f k8s/deployment.yaml
+
+      - name: Check Deployments
+        run: |
+          kubectl get deployments
+          kubectl get pods
+
       - name: Update Deployment Image
         run: |
           kubectl set image deployment/three-tier-app \
-          three-tier-app=$IMAGE_REPO:$IMAGE_TAG
+          flask-app=$IMAGE_REPO:$IMAGE_TAG
 
       - name: Wait for Rollout
         run: |
