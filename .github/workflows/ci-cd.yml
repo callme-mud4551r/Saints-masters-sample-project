@@ -92,55 +92,55 @@ jobs:
         run: |
           docker push $IMAGE_REPO:$IMAGE_TAG
           docker push $IMAGE_REPO:latest
-
-  deploy:
-    needs: build-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure aws crredentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Update kubeconfig
-        run: |
-          aws eks update-kubeconfig \
-          --region ${{ secrets.AWS_REGION }} \
-          --name three-tier-app-cluster
-      - name: Delete Old Deployment
-        run: |
-          kubectl delete deployment three-tier-app --ignore-not-found=true
-
-      - name: Apply kubernates Manifests
-        run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
-      - name: Check Cluster Resources
-        run: |
-          kubectl get nodes
-          kubectl get deployments
-          kubectl get pods
-
-      - name: Check Deployments
-        run: |
-          kubectl get deployments
-          kubectl get pods
-      - name: Describe Pods
-        if: always()
-        run: |
-          kubectl describe pods
-
-      - name: Update Deployment Image
-        run: |
-          kubectl set image deployment/three-tier-app \
-          flask-app=$IMAGE_REPO:$IMAGE_TAG
-
-      - name: Wait for Rollout
-        run: |
-          kubectl rollout status deployment/three-tier-app --timeout=10m
+##------------------------------------------Deployment using github ci-cd---------------------------------
+#  deploy:
+#    needs: build-push
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Configure aws crredentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#
+#      - name: Update kubeconfig
+#        run: |
+#          aws eks update-kubeconfig \
+#          --region ${{ secrets.AWS_REGION }} \
+#          --name three-tier-app-cluster
+#      - name: Delete Old Deployment
+#        run: |
+#          kubectl delete deployment three-tier-app --ignore-not-found=true
+#
+#      - name: Apply kubernates Manifests
+#        run: |
+#          kubectl apply -f k8s/deployment.yaml
+#          kubectl apply -f k8s/service.yaml
+#      - name: Check Cluster Resources
+#        run: |
+#          kubectl get nodes
+#          kubectl get deployments
+#          kubectl get pods
+#
+#      - name: Check Deployments
+#        run: |
+#          kubectl get deployments
+#          kubectl get pods
+#      - name: Describe Pods
+#        if: always()
+#        run: |
+#          kubectl describe pods
+#
+#      - name: Update Deployment Image
+#        run: |
+#          kubectl set image deployment/three-tier-app \
+#          flask-app=$IMAGE_REPO:$IMAGE_TAG
+#
+#      - name: Wait for Rollout
+#        run: |
+#          kubectl rollout status deployment/three-tier-app --timeout=10m
