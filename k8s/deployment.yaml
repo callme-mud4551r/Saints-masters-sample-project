@@ -19,7 +19,7 @@ spec:
 
         env:
         - name: DB_HOST
-          value: "three-tier-app-mysql.cxes68wssrwe.ap-south-1.rds.amazonaws.com"
+          value: "three-tier-app-mysql.cnasygy06z8x.ap-south-1.rds.amazonaws.com"
 
         - name: DB_USER
           value: "db_username"
