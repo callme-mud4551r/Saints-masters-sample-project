@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: 160686961672.dkr.ecr.ap-south-1.amazonaws.com/three-tier-app:latest
+        image: 622488711452.dkr.ecr.ap-south-1.amazonaws.com/three-tier-app:latest
         imagePullPolicy: Always
 
         env:
