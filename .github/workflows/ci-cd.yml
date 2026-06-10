@@ -113,7 +113,6 @@ jobs:
           aws eks update-kubeconfig \
           --region ${{ secrets.AWS_REGION }} \
           --name three-tier-app-cluster
-            
       - name: Delete Old Deployment
         run: |
           kubectl delete deployment three-tier-app --ignore-not-found=true
@@ -121,6 +120,7 @@ jobs:
       - name: Apply kubernates Manifests
         run: |
           kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
       - name: Check Cluster Resources
         run: |
           kubectl get nodes
