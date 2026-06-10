@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: three-tier-app
+  namespace: production
 spec:
   replicas: 2
   selector:
@@ -24,7 +25,7 @@ spec:
         - name: DB_USER
           value: "db_username"
 
-        # Replace with your actual password
+
         - name: DB_PASSWORD
           value: "db_password"
 
