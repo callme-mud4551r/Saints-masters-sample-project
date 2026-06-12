@@ -13,7 +13,7 @@ S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "your-app-image-uploads")
 AWS_REGION = os.environ.get("AWS_DEFAULT_REGION", "ap-south-1")
 s3_client = boto3.client('s3', region_name=AWS_REGION)
 
-# --- Database Connection ---
+# --- Database Connection & Schema Migration ---
 try:
     db = pymysql.connect(
         host=os.environ["DB_HOST"],
@@ -23,15 +23,23 @@ try:
     )
     cursor = db.cursor()
 
-    # Updated schema to include an image_key column
+    # 1. Base table creation
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        image_key VARCHAR(255) DEFAULT NULL
+        name VARCHAR(255) NOT NULL
     )
     """)
     db.commit()
+
+    # 2. Migration: Dynamically append column if legacy database deployment skips it
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN image_key VARCHAR(255) DEFAULT NULL")
+        db.commit()
+        print("Database migration successful: 'image_key' column validated.")
+    except Exception:
+        # If the column already exists, MySQL throws an error. We safely catch and rollback here.
+        db.rollback()
 
 except Exception as e:
     print(f"Database connection failed: {e}")
@@ -43,13 +51,12 @@ def home():
     if db is None:
         return "<h3>Database connection failed.</h3>"
 
-    # Re-verify/ping database connection to keep it alive
-    db.ping(reconnect=True)
+    # Note: Removed the deprecated 'reconnect' argument from db.ping()
+    db.ping()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
 
-    # Note the added enctype="multipart/form-data" for file handling
     output = """
     <h1>User Form with Image Upload</h1>
 
@@ -68,7 +75,11 @@ def home():
 
     for user in users:
         username = user[1]
-        image_key = user[2] if user[2] else "No image"
+        
+        # Defensive Index Check: Validates length of the returned row tuple 
+        # to guarantee backward-compatibility with pre-existing records.
+        image_key = user[2] if len(user) > 2 and user[2] else "No image uploaded"
+        
         output += f"<li><strong>{username}</strong> (Image File: {image_key})</li>"
 
     output += "</ul>"
@@ -88,9 +99,8 @@ def submit():
 
     # 1. Upload file directly to Amazon S3
     try:
-        # Standardize filename to prevent collisions if necessary
         s3_file_key = f"uploads/{username}_{file.filename}"
-        
+
         # Uploading file object straight from memory to S3
         s3_client.upload_fileobj(
             file,
@@ -98,7 +108,7 @@ def submit():
             s3_file_key,
             ExtraArgs={"ContentType": file.content_type}
         )
-        
+
     except NoCredentialsError:
         return "<h3>AWS Credentials not found. Check EKS IAM roles.</h3>", 500
     except Exception as e:
@@ -106,7 +116,7 @@ def submit():
 
     # 2. Insert record into MySQL database
     try:
-        db.ping(reconnect=True)
+        db.ping()
         cursor = db.cursor()
         sql = "INSERT INTO users(name, image_key) VALUES(%s, %s)"
         cursor.execute(sql, (username, s3_file_key))
