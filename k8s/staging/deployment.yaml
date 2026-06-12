@@ -25,7 +25,6 @@ spec:
         - name: DB_USER
           value: "db_username"
 
-        # Replace with your actual password
         - name: DB_PASSWORD
           value: "db_password"
 
@@ -37,6 +36,19 @@ spec:
 
         - name: AWS_DEFAULT_REGION
           value: "ap-south-1"
+
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_ACCESS_KEY_ID
+
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_SECRET_ACCESS_KEY
+
 
         ports:
         - containerPort: 5000
