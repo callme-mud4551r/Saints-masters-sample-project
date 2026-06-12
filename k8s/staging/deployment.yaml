@@ -32,5 +32,8 @@ spec:
         - name: DB_NAME
           value: "three_tier_app_db"
 
+        - name: S3_BUCKET_NAME
+          value: "eks-app-uploads-2026"
+
         ports:
         - containerPort: 5000
