@@ -35,5 +35,8 @@ spec:
         - name: S3_BUCKET_NAME
           value: "eks-app-uploads-2026"
 
+        - name: AWS_DEFAULT_REGION
+          value: "ap-south-1"
+
         ports:
         - containerPort: 5000

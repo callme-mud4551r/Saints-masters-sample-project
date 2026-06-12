@@ -7,10 +7,11 @@ from botocore.exceptions import NoCredentialsError
 app = Flask(__name__)
 
 # --- AWS S3 Configuration ---
-# It's best practice to use IAM Roles for Service Accounts (IRSA) in EKS.
-# If IRSA is configured, boto3 automatically locates the credentials.
 S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "your-app-image-uploads")
-s3_client = boto3.client('s3')
+
+# Fallback pattern targeting your deployment region directly if the environment variable is dropped
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION", "ap-south-1")
+s3_client = boto3.client('s3', region_name=AWS_REGION)
 
 # --- Database Connection ---
 try:
