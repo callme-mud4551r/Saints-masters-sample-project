@@ -4,7 +4,7 @@ metadata:
   name: three-tier-app-service
   namespace: staging
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-02176275e084fdc60,subnet-038b49b0579cd57a5"
+    service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-038b49b0579cd57a5,subnet-02176275e084fdc60"
 spec:
   type: LoadBalancer
   selector:
