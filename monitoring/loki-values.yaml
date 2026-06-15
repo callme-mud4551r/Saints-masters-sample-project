@@ -1,0 +1,36 @@
+loki:
+  auth_enabled: false
+
+singleBinary:
+  replicas: 1
+
+deploymentMode: SingleBinary
+
+gateway:
+  enabled: false
+
+chunksCache:
+  enabled: false
+
+resultsCache:
+  enabled: false
+
+lokiCanary:
+  enabled: false
+
+test:
+  enabled: false
+
+backend:
+  replicas: 0
+
+read:
+  replicas: 0
+
+write:
+  replicas: 0
+
+singleBinary:
+  persistence:
+    enabled: true
+    size: 10Gi
