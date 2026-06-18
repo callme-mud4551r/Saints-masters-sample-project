@@ -1,25 +1,47 @@
+deploymentMode: SingleBinary
+
 loki:
   auth_enabled: false
+
+  schemaConfig:
+    configs:
+      - from: "2026-01-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+
+  commonConfig:
+    replication_factor: 1
+
+  storage:
+    type: s3
+
+    bucketNames:
+      chunks: three-tier-app-loki-logs-622488711452
+      ruler: three-tier-app-loki-logs-622488711452
+      admin: three-tier-app-loki-logs-622488711452
+
+    s3:
+      region: ap-south-1
+      accessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      secretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 singleBinary:
   replicas: 1
 
-deploymentMode: SingleBinary
+  persistence:
+    enabled: false
 
-gateway:
-  enabled: false
+  extraVolumes:
+    - name: tmp-loki
+      emptyDir: {}
 
-chunksCache:
-  enabled: false
-
-resultsCache:
-  enabled: false
-
-lokiCanary:
-  enabled: false
-
-test:
-  enabled: false
+  extraVolumeMounts:
+    - name: tmp-loki
+      mountPath: /var/loki
 
 backend:
   replicas: 0
@@ -30,7 +52,17 @@ read:
 write:
   replicas: 0
 
-singleBinary:
-  persistence:
-    enabled: true
-    size: 10Gi
+gateway:
+  enabled: false
+
+lokiCanary:
+  enabled: false
+
+chunksCache:
+  enabled: false
+
+resultsCache:
+  enabled: false
+
+test:
+  enabled: false
