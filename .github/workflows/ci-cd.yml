@@ -76,7 +76,6 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t $IMAGE_REPO:$IMAGE_TAG .
-          docker tag $IMAGE_REPO:$IMAGE_TAG $IMAGE_REPO:v3
 
       - name: Run Trivy Scan
         uses: aquasecurity/trivy-action@master
@@ -91,7 +90,7 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push $IMAGE_REPO:$IMAGE_TAG
-          docker push $IMAGE_REPO:v2
+
 ##------------------------------------------Deployment using github ci-cd---------------------------------
 #  deploy:
 #    needs: build-push
