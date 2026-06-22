@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: 622488711452.dkr.ecr.ap-south-1.amazonaws.com/three-tier-app:v2
+          image: 622488711452.dkr.ecr.ap-south-1.amazonaws.com/three-tier-app:v3
           imagePullPolicy: Always
 
           ports:
