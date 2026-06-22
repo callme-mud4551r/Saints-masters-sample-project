@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/tracking-id: three-tier-app-stage:apps/Deployment:staging/three-tier-app
+    deployment.kubernetes.io/revision: "6"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"argocd.argoproj.io/tracking-id":"three-tier-app-stage:apps/Deployment:staging/three-tier-app"},"name":"three-tier-app","namespace":"staging"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"three-tier-app"}},"template":{"metadata":{"labels":{"app":"three-tier-app"}},"spec":{"containers":[{"env":[{"name":"DB_HOST","value":"three-tier-app-mysql.cnasygy06z8x.ap-south-1.rds.amazonaws.com"},{"name":"DB_USER","value":"db_username"},{"name":"DB_PASSWORD","value":"db_password"},{"name":"DB_NAME","value":"three_tier_app_db"},{"name":"S3_BUCKET_NAME","value":"eks-app-uploads-2026"},{"name":"AWS_DEFAULT_REGION","value":"ap-south-1"},{"name":"AWS_ACCESS_KEY_ID","valueFrom":{"secretKeyRef":{"key":"AWS_ACCESS_KEY_ID","name":"aws-credentials"}}},{"name":"AWS_SECRET_ACCESS_KEY","valueFrom":{"secretKeyRef":{"key":"AWS_SECRET_ACCESS_KEY","name":"aws-credentials"}}}],"image":"622488711452.dkr.ecr.ap-south-1.amazonaws.com/three-tier-app:v2","imagePullPolicy":"Always","name":"flask-app","ports":[{"containerPort":5000}]}]}}}}
+  creationTimestamp: "2026-06-10T10:46:36Z"
+  generation: 6
+  name: three-tier-app
+  namespace: staging
+  resourceVersion: "715139"
+  uid: ed546394-f3dc-44fb-b415-ed05394605b2
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: three-tier-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-06-12T07:43:22Z"
+      labels:
+        app: three-tier-app
+    spec:
+      containers:
+      - env:
+        - name: DB_HOST
+          value: three-tier-app-mysql.cnasygy06z8x.ap-south-1.rds.amazonaws.com
+        - name: DB_USER
+          value: db_username
+        - name: DB_PASSWORD
+          value: db_password
+        - name: DB_NAME
+          value: three_tier_app_db
+        - name: S3_BUCKET_NAME
+          value: eks-app-uploads-2026
+        - name: AWS_DEFAULT_REGION
+          value: ap-south-1
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: aws-credentials
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: aws-credentials
+        image: 622488711452.dkr.ecr.ap-south-1.amazonaws.com/three-tier-app:v2
+        imagePullPolicy: Always
+        name: flask-app
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 2
+  conditions:
+  - lastTransitionTime: "2026-06-12T07:10:35Z"
+    lastUpdateTime: "2026-06-12T07:10:35Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2026-06-10T10:46:36Z"
+    lastUpdateTime: "2026-06-12T09:41:51Z"
+    message: ReplicaSet "three-tier-app-7db4d88f87" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 6
+  readyReplicas: 2
+  replicas: 2
+  terminatingReplicas: 0
+  updatedReplicas: 2
