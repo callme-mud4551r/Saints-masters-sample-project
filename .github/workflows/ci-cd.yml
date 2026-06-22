@@ -91,6 +91,23 @@ jobs:
         run: |
           docker push $IMAGE_REPO:$IMAGE_TAG
 
+      - name: Update Rollout Image
+        run: |
+          sed -i "s|image: .*|image: $IMAGE_REPO:$IMAGE_TAG|g" k8s/staging/rollout.yaml
+
+      - name: Commit Updated Rollout
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+
+          git add k8s/staging/rollout.yaml
+          git commit -m "Update image to $IMAGE_TAG" || echo "No changes"
+
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
 ##------------------------------------------Deployment using github ci-cd---------------------------------
 #  deploy:
 #    needs: build-push
