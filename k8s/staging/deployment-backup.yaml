@@ -1,12 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+#Without it, ArgoCD cannot properly track sync status.
   annotations:
     argocd.argoproj.io/tracking-id: three-tier-app-stage:apps/Deployment:staging/three-tier-app
+#rollout revision history
     deployment.kubernetes.io/revision: "6"
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"argocd.argoproj.io/tracking-id":"three-tier-app-stage:apps/Deployment:staging/three-tier-app"},"name":"three-tier-app","namespace":"staging"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"three-tier-app"}},"template":{"metadata":{"labels":{"app":"three-tier-app"}},"spec":{"containers":[{"env":[{"name":"DB_HOST","value":"three-tier-app-mysql.cnasygy06z8x.ap-south-1.rds.amazonaws.com"},{"name":"DB_USER","value":"db_username"},{"name":"DB_PASSWORD","value":"db_password"},{"name":"DB_NAME","value":"three_tier_app_db"},{"name":"S3_BUCKET_NAME","value":"eks-app-uploads-2026"},{"name":"AWS_DEFAULT_REGION","value":"ap-south-1"},{"name":"AWS_ACCESS_KEY_ID","valueFrom":{"secretKeyRef":{"key":"AWS_ACCESS_KEY_ID","name":"aws-credentials"}}},{"name":"AWS_SECRET_ACCESS_KEY","valueFrom":{"secretKeyRef":{"key":"AWS_SECRET_ACCESS_KEY","name":"aws-credentials"}}}],"image":"622488711452.dkr.ecr.ap-south-1.amazonaws.com/three-tier-app:v2","imagePullPolicy":"Always","name":"flask-app","ports":[{"containerPort":5000}]}]}}}}
   creationTimestamp: "2026-06-10T10:46:36Z"
+#deployment update
   generation: 6
   name: three-tier-app
   namespace: staging
@@ -19,6 +22,7 @@ spec:
   selector:
     matchLabels:
       app: three-tier-app
+#control deployment method
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -66,6 +70,7 @@ spec:
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+#node selector
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30

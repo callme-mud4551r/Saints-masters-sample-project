@@ -1,8 +1,10 @@
+#Service solves this by giving one stable endpoint.
 apiVersion: v1
 kind: Service
 metadata:
   name: three-tier-app-service
 spec:
+#Users cannot access your application from outside the cluster.
   type: LoadBalancer
   selector:
     app: three-tier-app

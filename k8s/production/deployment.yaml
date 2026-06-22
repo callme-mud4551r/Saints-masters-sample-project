@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: three-tier-app
+
+#Defines how the pod should run.
     spec:
       containers:
       - name: flask-app

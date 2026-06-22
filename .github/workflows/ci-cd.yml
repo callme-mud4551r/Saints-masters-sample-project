@@ -1,14 +1,15 @@
 name: CI-CD Pipeline
-
+#push main branch trigger
 on:
   push:
     branches:
       - main
-
+#using global var for version tag generate
 env:
   IMAGE_TAG: v${{ github.run_number }}
   IMAGE_REPO: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}
 
+#creating AWS infrastructure before application deployment.
 jobs:
 
   terraform:
@@ -19,7 +20,7 @@ jobs:
         working-directory: terraform
 
     steps:
-
+#download github repo ro runner through(.txt,docker)
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -44,11 +45,12 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-
+#Waits for Terraform job to finish successfully.
   build-push:
     needs: terraform
     runs-on: ubuntu-latest
 
+#Each job gets a fresh runner.
     steps:
       - uses: actions/checkout@v4
 
@@ -61,6 +63,7 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+#Unit Test Checks application functionality
       - name: Run Unit Tests
         run: pytest
 
@@ -77,6 +80,7 @@ jobs:
         run: |
           docker build -t $IMAGE_REPO:$IMAGE_TAG .
 
+#Docker image for vulnerabilities.
       - name: Run Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
@@ -87,14 +91,16 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
+#push docker image
       - name: Push Docker Image
         run: |
           docker push $IMAGE_REPO:$IMAGE_TAG
 
+#Automatically updates ArgoCD deployment manifest.
       - name: Update Rollout Image
         run: |
           sed -i "s|image: .*|image: $IMAGE_REPO:$IMAGE_TAG|g" k8s/staging/rollout.yaml
-
+#Saves new image version into Git repository.
       - name: Commit Updated Rollout
         run: |
           git config --global user.email "github-actions@github.com"
